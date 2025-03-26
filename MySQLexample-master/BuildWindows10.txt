@@ -1,0 +1,12 @@
+set PATH=%PATH%;C:\Qt\Tools\mingw1120_64\bin;C:\Qt\Tools\CMake_64\bin
+cd C:\Qt\6.7.0\Src\qtbase\src\plugins\sqldrivers
+call C:\Qt\6.7.0\mingw_64\bin\qt-cmake.bat -G "MinGW Makefiles" . -DMySQL_INCLUDE_DIR="C:\Program Files\MySQL\MySQL Connector C 6.1\include" -DMySQL_LIBRARY="C:\Program Files\MySQL\MySQL Connector C 6.1\lib\libmysql.lib" -DCMAKE_INSTALL_PREFIX="C:\Qt\6.7.0\mingw_64" -DCMAKE_C_COMPILER="gcc.exe" -DCMAKE_CXX_COMPILER="g++.exe"
+mingw32-make
+mingw32-make install
+pause
+
+
+fuente:
+https://github.com/thecodemonkey86/qt_mysql_driver
+Ajustar los paths a los valores de instalación de cada máquina
+Previamente hay que tener instalado mysql-connector, creada la base y operativo el mysql

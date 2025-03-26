@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>628</width>
+    <height>319</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MySQL Connection</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(0,0,0);
+border : 1px solid rgb(10,10,10);
+</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="0">
+     <widget class="QTableView" name="tableView">
+      <property name="styleSheet">
+       <string notr="true"> QTableView {
+	 background-color:rgb(10,10,10);
+	 border : 3px solid rgb(0,0,230);
+     selection-background-color: qlineargradient(x1: 0, y1: 0, x2: 0.5, y2: 0.5,
+                                 stop: 0 rgb(175,175,175), stop: 1 rgb(210,210,210));
+ }
+QTableView::item {
+    color: rgb(224,224,224);
+	font:setBold;
+}
+QTableView::item:selected {
+    color: rgb(224,224,224);
+	font:setBold;
+}
+ QTableView QTableCornerButton::section {
+     background: rgb(150,150,150);
+     border: 2px outset gray;
+ }</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="2" column="4">
+       <widget class="QPushButton" name="pushButton_eliminar">
+        <property name="styleSheet">
+         <string notr="true"> QPushButton {
+     background-color:rgb(224,224,224);
+     border-style: outset;
+     border-width: 2px;
+     border-radius: 10px;
+     border-color: gray;
+     font: bold 10px;
+     min-width: 6em;
+     padding: 6px;
+ }
+ QPushButton:pressed {
+     background-color: rgb(240,240, 240);
+     border-style: inset;
+ }</string>
+        </property>
+        <property name="text">
+         <string>Eliminar</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QPushButton" name="pushButton_nuevo">
+        <property name="styleSheet">
+         <string notr="true"> QPushButton {
+     background-color:rgb(224,224,224);
+     border-style: outset;
+     border-width: 2px;
+     border-radius: 10px;
+     border-color: gray;
+     font: bold 10px;
+     min-width: 6em;
+     padding: 6px;
+ }
+ QPushButton:pressed {
+     background-color: rgb(240,240, 240);
+     border-style: inset;
+ }</string>
+        </property>
+        <property name="text">
+         <string>Nuevo</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="6">
+       <widget class="QPushButton" name="pushButton_actualizar">
+        <property name="styleSheet">
+         <string notr="true"> QPushButton {
+     background-color:rgb(224,224,224);
+     border-style: outset;
+     border-width: 2px;
+     border-radius: 10px;
+     border-color: gray;
+     font: bold 10px;
+     min-width: 6em;
+     padding: 6px;
+ }
+ QPushButton:pressed {
+     background-color: rgb(240,240, 240);
+     border-style: inset;
+ }</string>
+        </property>
+        <property name="text">
+         <string>Actualizar</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="2" column="1">
+       <widget class="QPushButton" name="pushButton_connect">
+        <property name="styleSheet">
+         <string notr="true"> QPushButton {
+     background-color:rgb(224,224,224);
+     border-style: outset;
+     border-width: 2px;
+     border-radius: 10px;
+     border-color: gray;
+     font: bold 10px;
+     min-width: 6em;
+     padding: 6px;
+ }
+ QPushButton:pressed {
+     background-color: rgb(240,240, 240);
+     border-style: inset;
+ }</string>
+        </property>
+        <property name="text">
+         <string>Conectar</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>628</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

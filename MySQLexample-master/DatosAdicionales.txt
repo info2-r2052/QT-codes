@@ -1,0 +1,287 @@
+
+------------------------------------------------------------------------------------------
+Trabajos previos en la DB
+
+1) Ingreso a la DB
+Como root: mysql -u root -p
+Como user: mysql -u user -p
+
+2) Si no existe, crear el usuario (previo ingreso con root) (con % no especifica de donde es)
+CREATE USER 'info2'@'%' IDENTIFIED BY 'info2'; 
+
+ejemplo:
+	MariaDB [mysql]> CREATE USER 'info2'@'%' IDENTIFIED BY 'info2'; 
+	Query OK, 0 rows affected (0.001 sec)
+
+MariaDB [mysql]> 
+
+3) Accesos del usuario (No especifica la IP)
+GRANT ALL PRIVILEGES ON *.* TO 'info2'@'%' WITH GRANT OPTION;
+
+ejemplo:
+	MariaDB [mysql]> GRANT ALL PRIVILEGES ON *.* TO 'info2'@'%' WITH GRANT OPTION;
+	Query OK, 0 rows affected (0.001 sec)
+
+	MariaDB [mysql]> 
+
+3) A partir de acá Ingreso con el usuario.
+ejemplo:
+	MariaDB [mysql]> quit
+	Bye
+	$:sudo mysql -u info2 -p
+	Enter password: 
+	Welcome to the MariaDB monitor.  Commands end with ; or \g.
+	Your MariaDB connection id is 13
+	Server version: 10.3.22-MariaDB-0+deb10u1 Raspbian 10
+
+	Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+	Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+	MariaDB [(none)]> 
+
+
+4) Crear DB
+CREATE DATABASE info2QT;
+
+ejemplo:
+	MariaDB [(none)]> CREATE DATABASE info2QT;
+	Query OK, 1 row affected (0.001 sec)
+
+	MariaDB [(none)]> 
+
+5)  Crear Tabla en la DB anterior. No olvidar seleccionar la DB previamente
+
+ejemplo:
+	MariaDB [(none)]> use info2QT;
+	Database changed
+	MariaDB [info2QT]> CREATE TABLE users(
+		-> user_id INT AUTO_INCREMENT PRIMARY KEY,
+		-> username VARCHAR(40) NOT NULL,
+		-> password VARCHAR(255) NOT NULL,
+		-> email VARCHAR(255) NOT NULL
+		-> );
+	Query OK, 0 rows affected (0.030 sec)
+
+	MariaDB [info2QT]> 
+
+6) Insertar Valores a mano en tabla anterior.
+    
+INSERT INTO users ( user_id, username, password, email ) VALUES ( null, 'pepe', 'password','pepe@pepe.com' );
+INSERT INTO users ( user_id, username, password, email ) VALUES ( null, 'pepin', 'password','pepin@pepin.com' );
+
+ejemplo:
+	MariaDB [info2QT]> INSERT INTO users ( user_id, username, password, email ) VALUES ( null, 'Gustavo', 'password','gustavo@gustavo.com' );
+	Query OK, 1 row affected (0.005 sec)
+
+	MariaDB [info2QT]> INSERT INTO users ( user_id, username, password, email ) VALUES ( null, 'Jorge', 'password','jorge@jorge.com' );
+	Query OK, 1 row affected (0.004 sec)
+
+	MariaDB [info2QT]>
+
+Ejemplo de Chequeo:
+    MariaDB [info2QT]> select * from users;
++---------+----------+----------+---------------------+
+| user_id | username | password | email               |
++---------+----------+----------+---------------------+
+|       1 | Gustavo  | password | gustavo@gustavo.com |
+|       2 | Jorge    | password | jorge@jorge.com     |
++---------+----------+----------+---------------------+
+2 rows in set (0.001 sec)
+
+	MariaDB [info2QT]>
+	
+7) Adenda. Borrar Tabla. Enviar archivos si no funciona el File Transfer
+
+
+$:scp MySQLexample.zip pi@192.168.0.118:/home/pi/Desktop/MySQLexample.zip
+pi@192.168.0.118's password: 
+MySQLexample.zip                              100% 7393   148.6KB/s   00:00    
+$:
+
+8) Adenda. Permitir conexiones remotas.
+- Buscar la configuración my.cnf según corresponda a mysql o mariadb, en mi caso
+$:pwd
+/etc/mysql/mariadb.conf.d
+$:
+
+$:ls -lrth
+total 16K
+-rw-r--r-- 1 root root 1,1K ene 29 02:38 50-mysqld_safe.cnf
+-rw-r--r-- 1 root root  336 ene 29 02:38 50-mysql-clients.cnf
+-rw-r--r-- 1 root root  733 ene 29 02:38 50-client.cnf
+-rw-r--r-- 1 root root 3,9K may 29 18:07 50-server.cnf
+
+- Editar el archivo 50-server.cnf y comentar la línea bind para que escuche no solo en local host:
+.
+.
+.
+#skip-external-locking
+
+# Instead of skip-networking the default is now to listen only on
+# localhost which is more compatible and is not less secure.
+#bind-address            = 127.0.0.1
+
+#
+# * Fine Tuning
+#
+#key_buffer_size        = 16M
+#max_allowed_packet     = 16M
+#thread_stack           = 192K
+.
+.
+.
+
+- Restartear servicio mysql para que tome los cambios:
+
+$:sudo systemctl restart mysql
+$:sudo systemctl status mysql
+* mariadb.service - MariaDB 10.3.22 database server
+   Loaded: loaded (/lib/systemd/system/mariadb.service; enabled; vendor preset: 
+   Active: active (running) since Fri 2020-05-29 18:07:21 -03; 7s ago
+     Docs: man:mysqld(8)
+           https://mariadb.com/kb/en/library/systemd/
+  Process: 1489 ExecStartPre=/usr/bin/install -m 755 -o mysql -g root -d /var/ru
+  Process: 1490 ExecStartPre=/bin/sh -c systemctl unset-environment _WSREP_START
+  Process: 1492 ExecStartPre=/bin/sh -c [ ! -e /usr/bin/galera_recovery ] && VAR
+  Process: 1568 ExecStartPost=/bin/sh -c systemctl unset-environment _WSREP_STAR
+  Process: 1570 ExecStartPost=/etc/mysql/debian-start (code=exited, status=0/SUC
+ Main PID: 1537 (mysqld)
+   Status: "Taking your SQL requests now..."
+    Tasks: 31 (limit: 3911)
+   Memory: 49.7M
+   CGroup: /system.slice/mariadb.service
+           `-1537 /usr/sbin/mysqld
+.
+.
+.
+
+
+- Probar	
+----------------------------------------------------------------------------------------------------------
+
+CREATE TABLE example ( id smallint unsigned not null auto_increment, nombre varchar(20) not null, constraint pk_example primary key (id) );
+INSERT INTO example ( id, nombre ) VALUES ( null, 'Marianito' );
+
+
+
+-------------------------------------------------------------
+Para el error de plugin, se instaló
+sudo apt-get install libqt5sql5-mysql
+
+https://stackoverflow.com/questions/37369480/qsqldatabase-qmysql-driver-not-loaded-on-ubuntu-15-04-64bits
+
+-------------------------------------------------------------
+mysql> CREATE TABLE users(
+    ->    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    ->    username VARCHAR(40),
+    ->    password VARCHAR(255),
+    ->    email VARCHAR(255)
+    -> );
+
+
+INSERT INTO users ( user_id, username, password, email ) VALUES ( null, 'Marianito', 'password','marianito@marianito.com' );
+INSERT INTO users ( user_id, username, password, email ) VALUES ( null, 'Juliancho', 'password','juliancho@juliancho.com' );
+--------------------------------------------------------
+Para el error que no se podía conectar por el shapassword
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> ALTER USER marianito
+    -> IDENTIFIED WITH mysql_native_password
+    -> BY 'user';
+Query OK, 0 rows affected (0,11 sec)
+
+https://stackoverflow.com/questions/49963383/authentication-plugin-caching-sha2-password
+mysql> 
+--------------------------------------------------------
+
+
+CREATE TABLE example ( id smallint unsigned not null auto_increment, nombre varchar(20) not null, apellido varchar(20) not null, edad unsigned
+int not null, cargo varchar(20) );
+
+
+-------------------------------------------------------------------------------
+Problemas de dirver MYSQL con kit distinto a Desktop.
+Hay que armar el driver MYSQL a mano.
+Contar con los fuentes de mysql en
+/home/juliancho/Qt/5.12.6/Src/qtbase/src/plugins/sqldrivers/mysql
+
+1) Luego ejecutar con el qmake que viene en el kit. Y especificar el path de librerías de mysql
+/home/juliancho/Qt/5.12.6/gcc_64/bin/qmake -- MYSQL_PREFIX=/usr/lib/
+
+2) Ejecutar el make pero solo para el driver mysql
+sudo make sub-mysql
+
+3) Ingresar al directorio de mysql --> /home/juliancho/Qt/5.12.6/Src/qtbase/src/plugins/sqldrivers/mysql
+$:cd mysql/
+$:sudo make install
+
+No tiene que haber errores en ninguno de los pasos.
+
+Logs:
+$:cd Qt/5.12.6/Src/qtbase/src/plugins/sqldrivers/
+$:ls -lrth
+total 3,8M
+-rw-rw-r-- 1 juliancho juliancho  226 nov  8  2019 README
+-rw-rw-r-- 1 juliancho juliancho  224 nov  8  2019 qsqldriverbase.pri
+-rw-rw-r-- 1 juliancho juliancho 2,9K nov  8  2019 configure.pri
+-rw-rw-r-- 1 juliancho juliancho 8,1K nov  8  2019 configure.json
+drwxrwxr-x 2 juliancho juliancho 4,0K nov  8  2019 mysql
+drwxrwxr-x 2 juliancho juliancho 4,0K ene  1 08:32 tds
+drwxr-xr-x 5 juliancho juliancho 4,0K jun  8 10:53 config.tests
+-rw-r--r-- 1 juliancho juliancho 8,2K jun  8 10:53 config.log
+-rw-r--r-- 1 juliancho juliancho    0 jun  8 10:53 qtsqldrivers-config.h
+-rw-r--r-- 1 juliancho juliancho  481 jun  8 10:53 config.summary
+-rw-r--r-- 1 juliancho juliancho    0 jun  8 10:53 config.opt
+drwxr-xr-x 4 juliancho juliancho 4,0K jun  8 10:55 mkspecs
+drwxr-xr-x 3 juliancho juliancho 4,0K jun  8 10:55 plugins
+drwxr-xr-x 3 juliancho juliancho 4,0K jun  8 10:55 lib
+drwxrwxr-x 5 juliancho juliancho 4,0K jun  8 10:55 oci
+-rw-r--r-- 1 juliancho juliancho 3,7M jun  9 08:50 allSymsLinks.txt
+drwxrwxr-x 5 juliancho juliancho 4,0K jun  9 09:20 db2
+drwxrwxr-x 5 juliancho juliancho 4,0K jun  9 09:21 sqlite
+drwxrwxr-x 5 juliancho juliancho 4,0K jun  9 09:21 sqlite2
+drwxrwxr-x 5 juliancho juliancho 4,0K jun  9 09:22 ibase
+-rw-rw-r-- 1 juliancho juliancho  510 jun  9 09:22 sqldrivers.pro
+drwxrwxr-x 5 juliancho juliancho 4,0K jun  9 22:55 odbc
+-rw-r--r-- 1 juliancho juliancho  608 jun  9 22:59 qtsqldrivers-config.pri
+-rw-r--r-- 1 juliancho juliancho  315 jun  9 22:59 qtsqldrivers-config_p.h
+-rw-r--r-- 1 juliancho juliancho  62K jun  9 23:20 Makefile
+drwxrwxr-x 5 juliancho juliancho 4,0K jun  9 23:20 psql
+$:ls -lrth mysql
+total 72K
+-rw-rw-r-- 1 juliancho juliancho  204 nov  8  2019 README
+-rw-rw-r-- 1 juliancho juliancho 3,8K nov  8  2019 qsql_mysql_p.h
+-rw-rw-r-- 1 juliancho juliancho  51K nov  8  2019 qsql_mysql.cpp
+-rw-rw-r-- 1 juliancho juliancho  217 nov  8  2019 mysql.pro
+-rw-rw-r-- 1 juliancho juliancho   40 nov  8  2019 mysql.json
+-rw-rw-r-- 1 juliancho juliancho 2,6K nov  8  2019 main.cpp
+$:
+$:
+$:/home/juliancho/Qt/5.12.6/gcc_64/bin/qmake -- MYSQL_PREFIX=/usr/lib/
+$:sudo make sub-mysql
+[sudo] password for juliancho: 
+cd mysql/ && ( test -e Makefile || /home/juliancho/Qt/5.12.6/gcc_64/bin/qmake -o Makefile /home/juliancho/Qt/5.12.6/Src/qtbase/src/plugins/sqldrivers/mysql/mysql.pro ) && make -f Makefile
+make[1]: se entra en el directorio '/home/juliancho/Qt/5.12.6/Src/qtbase/src/plugins/sqldrivers/mysql'
+g++ -c -pipe -O2 -g -std=c++1y -fvisibility=hidden -fvisibility-inlines-hidden -fno-exceptions -Wall -W -Wvla -Wdate-time -D_REENTRANT -fPIC -DQT_DEPRECATED_WARNINGS -DQT_NO_NARROWING_CONVERSIONS_IN_CONNECT -DQT_NO_CAST_TO_ASCII -DQT_NO_CAST_FROM_ASCII -DQT_NO_EXCEPTIONS -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE -DQT_NO_DEBUG -DQT_PLUGIN -DQT_SQL_LIB -DQT_CORE_LIB -I. -I/home/juliancho/Qt/5.12.6/Src/qtbase/include/QtSql/5.12.6 -I/home/juliancho/Qt/5.12.6/Src/qtbase/include/QtSql/5.12.6/QtSql -I/home/juliancho/Qt/5.12.6/Src/qtbase/include/QtCore/5.12.6 -I/home/juliancho/Qt/5.12.6/Src/qtbase/include/QtCore/5.12.6/QtCore -I/home/juliancho/Qt/5.12.6/Src/qtbase/include -I/home/juliancho/Qt/5.12.6/Src/qtbase/include/QtSql -I/home/juliancho/Qt/5.12.6/Src/qtbase/include/QtCore -I.moc -isystem /usr/include/mysql -I/home/qt/openssl-1.1.1b/include -I/home/juliancho/Qt/5.12.6/gcc_64/mkspecs/linux-g++ -o .obj/qsql_mysql.o qsql_mysql.cpp
+g++ -pipe -O2 -g -std=c++1y -fvisibility=hidden -fvisibility-inlines-hidden -fno-exceptions -Wall -W -Wvla -Wdate-time -dM -E -o .moc/moc_predefs.h /home/juliancho/Qt/5.12.6/gcc_64/mkspecs/features/data/dummy.cpp
+/home/juliancho/Qt/5.12.6/Src/qtbase/bin/moc -DQT_DEPRECATED_WARNINGS -DQT_NO_NARROWING_CONVERSIONS_IN_CONNECT -DQT_NO_CAST_TO_ASCII -DQT_NO_CAST_FROM_ASCII -DQT_NO_EXCEPTIONS -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE -DQT_NO_DEBUG -DQT_PLUGIN -DQT_SQL_LIB -DQT_CORE_LIB --include /home/juliancho/Qt/5.12.6/Src/qtbase/src/plugins/sqldrivers/mysql/.moc/moc_predefs.h -I/home/juliancho/Qt/5.12.6/gcc_64/mkspecs/linux-g++ -I/home/juliancho/Qt/5.12.6/Src/qtbase/src/plugins/sqldrivers/mysql -I/home/juliancho/Qt/5.12.6/Src/qtbase/include/QtSql/5.12.6 -I/home/juliancho/Qt/5.12.6/Src/qtbase/include/QtSql/5.12.6/QtSql -I/home/juliancho/Qt/5.12.6/Src/qtbase/include/QtCore/5.12.6 -I/home/juliancho/Qt/5.12.6/Src/qtbase/include/QtCore/5.12.6/QtCore -I/home/juliancho/Qt/5.12.6/Src/qtbase/include -I/home/juliancho/Qt/5.12.6/Src/qtbase/include/QtSql -I/home/juliancho/Qt/5.12.6/Src/qtbase/include/QtCore -I/usr/include/c++/8 -I/usr/include/x86_64-linux-gnu/c++/8 -I/usr/include/c++/8/backward -I/usr/lib/gcc/x86_64-linux-gnu/8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include main.cpp -o .moc/main.moc
+g++ -c -pipe -O2 -g -std=c++1y -fvisibility=hidden -fvisibility-inlines-hidden -fno-exceptions -Wall -W -Wvla -Wdate-time -D_REENTRANT -fPIC -DQT_DEPRECATED_WARNINGS -DQT_NO_NARROWING_CONVERSIONS_IN_CONNECT -DQT_NO_CAST_TO_ASCII -DQT_NO_CAST_FROM_ASCII -DQT_NO_EXCEPTIONS -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE -DQT_NO_DEBUG -DQT_PLUGIN -DQT_SQL_LIB -DQT_CORE_LIB -I. -I/home/juliancho/Qt/5.12.6/Src/qtbase/include/QtSql/5.12.6 -I/home/juliancho/Qt/5.12.6/Src/qtbase/include/QtSql/5.12.6/QtSql -I/home/juliancho/Qt/5.12.6/Src/qtbase/include/QtCore/5.12.6 -I/home/juliancho/Qt/5.12.6/Src/qtbase/include/QtCore/5.12.6/QtCore -I/home/juliancho/Qt/5.12.6/Src/qtbase/include -I/home/juliancho/Qt/5.12.6/Src/qtbase/include/QtSql -I/home/juliancho/Qt/5.12.6/Src/qtbase/include/QtCore -I.moc -isystem /usr/include/mysql -I/home/qt/openssl-1.1.1b/include -I/home/juliancho/Qt/5.12.6/gcc_64/mkspecs/linux-g++ -o .obj/main.o main.cpp
+/home/juliancho/Qt/5.12.6/Src/qtbase/bin/moc -DQT_DEPRECATED_WARNINGS -DQT_NO_NARROWING_CONVERSIONS_IN_CONNECT -DQT_NO_CAST_TO_ASCII -DQT_NO_CAST_FROM_ASCII -DQT_NO_EXCEPTIONS -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE -DQT_NO_DEBUG -DQT_PLUGIN -DQT_SQL_LIB -DQT_CORE_LIB --include /home/juliancho/Qt/5.12.6/Src/qtbase/src/plugins/sqldrivers/mysql/.moc/moc_predefs.h -I/home/juliancho/Qt/5.12.6/gcc_64/mkspecs/linux-g++ -I/home/juliancho/Qt/5.12.6/Src/qtbase/src/plugins/sqldrivers/mysql -I/home/juliancho/Qt/5.12.6/Src/qtbase/include/QtSql/5.12.6 -I/home/juliancho/Qt/5.12.6/Src/qtbase/include/QtSql/5.12.6/QtSql -I/home/juliancho/Qt/5.12.6/Src/qtbase/include/QtCore/5.12.6 -I/home/juliancho/Qt/5.12.6/Src/qtbase/include/QtCore/5.12.6/QtCore -I/home/juliancho/Qt/5.12.6/Src/qtbase/include -I/home/juliancho/Qt/5.12.6/Src/qtbase/include/QtSql -I/home/juliancho/Qt/5.12.6/Src/qtbase/include/QtCore -I/usr/include/c++/8 -I/usr/include/x86_64-linux-gnu/c++/8 -I/usr/include/c++/8/backward -I/usr/lib/gcc/x86_64-linux-gnu/8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include qsql_mysql_p.h -o .moc/moc_qsql_mysql_p.cpp
+g++ -c -pipe -O2 -g -std=c++1y -fvisibility=hidden -fvisibility-inlines-hidden -fno-exceptions -Wall -W -Wvla -Wdate-time -D_REENTRANT -fPIC -DQT_DEPRECATED_WARNINGS -DQT_NO_NARROWING_CONVERSIONS_IN_CONNECT -DQT_NO_CAST_TO_ASCII -DQT_NO_CAST_FROM_ASCII -DQT_NO_EXCEPTIONS -D_LARGEFILE64_SOURCE -D_LARGEFILE_SOURCE -DQT_NO_DEBUG -DQT_PLUGIN -DQT_SQL_LIB -DQT_CORE_LIB -I. -I/home/juliancho/Qt/5.12.6/Src/qtbase/include/QtSql/5.12.6 -I/home/juliancho/Qt/5.12.6/Src/qtbase/include/QtSql/5.12.6/QtSql -I/home/juliancho/Qt/5.12.6/Src/qtbase/include/QtCore/5.12.6 -I/home/juliancho/Qt/5.12.6/Src/qtbase/include/QtCore/5.12.6/QtCore -I/home/juliancho/Qt/5.12.6/Src/qtbase/include -I/home/juliancho/Qt/5.12.6/Src/qtbase/include/QtSql -I/home/juliancho/Qt/5.12.6/Src/qtbase/include/QtCore -I.moc -isystem /usr/include/mysql -I/home/qt/openssl-1.1.1b/include -I/home/juliancho/Qt/5.12.6/gcc_64/mkspecs/linux-g++ -o .obj/moc_qsql_mysql_p.o .moc/moc_qsql_mysql_p.cpp
+rm -f libqsqlmysql.so
+g++ -Wl,--no-undefined -Wl,--enable-new-dtags -Wl,-z,origin -Wl,-rpath,\$ORIGIN/../../lib -Wl,-rpath,\$ORIGIN/../../lib -shared -o libqsqlmysql.so .obj/qsql_mysql.o .obj/main.o .obj/moc_qsql_mysql_p.o  -L/home/qt/openssl-1.1.1b/lib /home/juliancho/Qt/5.12.6/Src/qtbase/lib/libQt5Sql.so /home/juliancho/Qt/5.12.6/Src/qtbase/lib/libQt5Core.so -lpthread /usr/lib/x86_64-linux-gnu/libmysqlclient.so    
+mv -f libqsqlmysql.so /home/juliancho/Qt/5.12.6/Src/qtbase/plugins/sqldrivers/libqsqlmysql.so
+objcopy --only-keep-debug ../../../../plugins/sqldrivers/libqsqlmysql.so ../../../../plugins/sqldrivers/libqsqlmysql.so.debug && objcopy --strip-debug ../../../../plugins/sqldrivers/libqsqlmysql.so && objcopy --add-gnu-debuglink=../../../../plugins/sqldrivers/libqsqlmysql.so.debug ../../../../plugins/sqldrivers/libqsqlmysql.so && chmod -x ../../../../plugins/sqldrivers/libqsqlmysql.so.debug
+make[1]: se sale del directorio '/home/juliancho/Qt/5.12.6/Src/qtbase/src/plugins/sqldrivers/mysql'
+$:cd mysql/
+$:sudo make install
+/home/juliancho/Qt/5.12.6/gcc_64/bin/qmake -install qinstall /home/juliancho/Qt/5.12.6/Src/qtbase/plugins/sqldrivers/libqsqlmysql.so.debug /home/juliancho/Qt/5.12.6/gcc_64/plugins/sqldrivers/libqsqlmysql.so.debug
+/home/juliancho/Qt/5.12.6/gcc_64/bin/qmake -install qinstall -exe /home/juliancho/Qt/5.12.6/Src/qtbase/plugins/sqldrivers/libqsqlmysql.so /home/juliancho/Qt/5.12.6/gcc_64/plugins/sqldrivers/libqsqlmysql.so
+/home/juliancho/Qt/5.12.6/gcc_64/bin/qmake -install qinstall /home/juliancho/Qt/5.12.6/Src/qtbase/lib/cmake/Qt5Sql/Qt5Sql_QMYSQLDriverPlugin.cmake /home/juliancho/Qt/5.12.6/gcc_64/lib/cmake/Qt5Sql/Qt5Sql_QMYSQLDriverPlugin.cmake
+$:pwd
+/home/juliancho/Qt/5.12.6/Src/qtbase/src/plugins/sqldrivers/mysql
+
+
+----------------------------------------------------------------------------------------

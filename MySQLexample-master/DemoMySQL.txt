@@ -1,0 +1,83 @@
+1. Crear proyecto QT Widget, agregar en el .pro sql:
+QT       += core gui sql
+
+2. Contar cómo será el aspecto de la gui: un tableView y botones debajo de la tableView
+ para conectar, eliminar, nuevo y actualizar. Utilizar un grid layout y colocar 5 
+ horizontal spacers entre los botones.
+
+3. Crear los slots de los botones.
+
+4. Incluir:
+
+    #include<QtSql>
+    #include<QSqlDatabase>
+    #include<QMessageBox>
+    #include<QSqlError>
+    #include<QSqlTableModel>
+
+Crear dos punteros privados en el .h:
+    QSqlDatabase mDatabase;
+    QSqlTableModel *model;
+
+5. En el slot de connect, preparar las condiciones de conexión a la base:
+
+    mDatabase = QSqlDatabase::addDatabase("QMYSQL");
+    mDatabase.setHostName("localhost");
+    mDatabase.setPort(3306);
+    mDatabase.setUserName("info2");
+    mDatabase.setPassword("info2");
+    mDatabase.setDatabaseName("info2QT");
+  Luego crear un flag para chequeo de apertura de DB:
+
+    bool aa = mDatabase.open();
+    
+    if( aa == true )
+    {
+      QMessageBox::information(this,"Connection","<FONT COLOR='#0'>Database connection succesfully</FONT>");
+      qDebug()<<"database connected";
+    }
+    else
+    {
+
+      QMessageBox::information(this,"No Connected","<FONT COLOR='#0'>Database is not Connected</FONT>");
+      qDebug()<<"database failed to connect ";
+      qDebug() << mDatabase.lastError();
+      return;
+    }
+
+ Probar.
+
+ 6. Agregar las líneas para que se llene el tableView:
+
+    model = new QSqlTableModel(this);
+    model->setTable("users");
+    model->select();
+    ui->tableView_sql->setModel(model);
+
+7. En el slot new:
+
+    model->insertRow(model->rowCount());
+
+8. En el slot delete:
+
+    model->removeRow(ui->tableView->currentIndex().row());
+
+9. En el slot update:
+
+   model->select();
+
+10. Por último en el destructor chequear desconexión y eliminar objetos.
+
+    if( mDatabase.isOpen() )
+    {
+        QMessageBox::information(this,"Disconnection","<FONT COLOR='#000000'>Database disconnection succesfully</FONT>");
+        qDebug()<<"database Disconnected ";
+        mDatabase.close();
+    }
+    else
+    {
+        QMessageBox::information(this,"Error Disconnection","<FONT COLOR='#000000'>Database can't Disconnect. Check previous open</FONT>");
+        qDebug()<<"database failed to disconnect ";
+        qDebug() << mDatabase.lastError();
+    }
+    delete ui;
