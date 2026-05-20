@@ -1,8 +1,13 @@
 #ifndef DATAUSER_H
 #define DATAUSER_H
 
-#include <QDialog>
+#include <QString>
 
+/*
+ * Modelo de un usuario (DTO / clase de datos).
+ * No sabe nada de ventanas ni de la tabla: solo guarda nombre, apellido y edad.
+ * MainWindow y UserDialog usan esta clase para pasar información entre sí.
+ */
 class DataUser
 {
 private:

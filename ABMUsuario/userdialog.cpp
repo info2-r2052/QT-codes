@@ -14,30 +14,31 @@ UserDialog::~UserDialog()
     delete ui;
 }
 
+// Al pulsar Aceptar, copiamos lo escrito en los controles hacia dataUser
 void UserDialog::on_buttonBox_accepted()
 {
-    SetData(    ui->lineEdit_Nombre->text(),
-                ui->lineEdit_Apellido->text(),
-                ui->lineEdit_Edad->text().toInt());
+    SetData(ui->lineEdit_Nombre->text(),
+            ui->lineEdit_Apellido->text(),
+            ui->lineEdit_Edad->text().toInt());
 }
 
-void UserDialog::SetData(QString nombre, QString apellido, int edad){
-
-    if(edad > 150)
+void UserDialog::SetData(QString nombre, QString apellido, int edad)
+{
+    // Validación simple de ejemplo (en un proyecto real podrías mostrar un mensaje)
+    if (edad > 150)
         return;
 
-    data.setNombre(nombre);
-    data.setApellido(apellido);
-    data.setEdad(edad);
+    dataUser.setNombre(nombre);
+    dataUser.setApellido(apellido);
+    dataUser.setEdad(edad);
 
-    ui->lineEdit_Nombre->setText(data.getNombre());
-    ui->lineEdit_Apellido->setText(data.getApellido());
-    ui->lineEdit_Edad->setText(QString::number(data.getEdad()));
+    // Actualizar los campos visibles (útil en MODIFICAR para ver lo que se cargó)
+    ui->lineEdit_Nombre->setText(dataUser.getNombre());
+    ui->lineEdit_Apellido->setText(dataUser.getApellido());
+    ui->lineEdit_Edad->setText(QString::number(dataUser.getEdad()));
 }
 
-DataUser UserDialog::GetData(void){
-    return data;
+DataUser UserDialog::GetData(void)
+{
+    return dataUser;
 }
-
-
-
