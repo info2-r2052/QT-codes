@@ -1,0 +1,91 @@
+# =============================================================================
+# QT-codes — archivos generados e irrelevantes para el repositorio
+# =============================================================================
+
+# Directorios de compilación (Qt Creator shadow build: build-Proyecto-...)
+build*/
+**/build*/
+
+# Qt / qmake
+*~
+*.autosave
+*.a
+*.core
+*.moc
+*.o
+*.obj
+*.orig
+*.rej
+*.so
+*.so.*
+*_pch.h.cpp
+*_resource.rc
+*.qm
+.#*
+*.*#
+*.debug
+Makefile*
+*.prl
+*.app
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+.qmake.cache
+.qmake.stash
+
+# Qt Creator
+*.pro.user
+*.pro.user.*
+*.qbs.user
+*.qbs.user.*
+*.autosave
+
+# Caché de análisis (Qt Creator / clangd)
+.qtc_clangd/
+**/.qtc_clangd/
+
+# Visual Studio / MSVC
+*.ib_pdb_index
+*.idb
+*.ilk
+*.pdb
+*.sln
+*.suo
+*.vcproj
+*vcproj.*.*.user
+*.ncb
+*.sdf
+*.opensdf
+*.vcxproj
+*vcxproj.*
+*.dll
+*.exe
+
+# MinGW
+*.Debug
+*.Release
+
+# Carpetas de salida típicas dentro del árbol de build
+debug/
+release/
+
+# IDE / editor (configuración local)
+.vscode/
+.idea/
+*.swp
+.*.swp
+*.flc
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+.directory
+*.stackdump
+
+# Python (si hay scripts auxiliares)
+*.pyc
+__pycache__/
+
+# Datos de prueba generados al ejecutar (opcional: descomentar si no querés versionar CSV)
+# usuarios.csv
